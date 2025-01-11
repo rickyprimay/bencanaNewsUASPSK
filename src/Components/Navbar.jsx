@@ -41,48 +41,57 @@ const Navbar = () => {
       ? "bg-teal-300 text-teal-900"
       : "hover:bg-teal-200 hover:text-teal-900";
 
+  // Cek apakah kita berada di halaman /dashboard
+  const isDashboard = location.pathname === "/dashboard";
+
   return (
     <>
       <div className="navbar bg-base-100 shadow-lg p-4">
         <div className="navbar-start">
-          <button
-            className="btn btn-ghost lg:hidden"
-            onClick={toggleSidebar}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          {!isDashboard && (
+            <button
+              className="btn btn-ghost lg:hidden"
+              onClick={toggleSidebar}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
+              </svg>
+            </button>
+          )}
 
-          <Link to="/" className="btn btn-ghost normal-case text-xl text-teal-600 font-semibold">
-            BenKir News
-          </Link>
+          {!isDashboard && (
+            <Link to="/" className="btn btn-ghost normal-case text-xl text-teal-600 font-semibold">
+              BenKir News
+            </Link>
+          )}
         </div>
 
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal p-0 space-x-4">
-            <li>
-              <Link to="/" className={`${isActive("/")}`}>
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/about" className={`${isActive("/about")}`}>
-                About
-              </Link>
-            </li>
-          </ul>
+          {!isDashboard && (
+            <ul className="menu menu-horizontal p-0 space-x-4">
+              <li>
+                <Link to="/" className={`${isActive("/")}`}>
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className={`${isActive("/about")}`}>
+                  About
+                </Link>
+              </li>
+            </ul>
+          )}
         </div>
 
         <div className="navbar-end flex items-center space-x-4">
@@ -100,7 +109,8 @@ const Navbar = () => {
                   alt="User Avatar"
                   className="w-10 h-10 rounded-full"
                 />
-                {username && <span className="ml-2">{username}</span>} 
+                {/* Conditionally render username only if not on mobile */}
+                {!isDashboard && username && <span className="ml-2">{username}</span>}
               </label>
 
               {isDropdownOpen && (

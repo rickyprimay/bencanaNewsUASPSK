@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import Navbar from "../../Components/Navbar";
-import Footer from "../../Components/Footer";
-import NewsCard from "../../Components/NewsCard";
+import Navbar from "../../../Components/Navbar";
+import Footer from "../../../Components/Footer";
+import NewsCard from "../../../Components/NewsCard";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDisasters } from "../../Redux/slice/disasterSlice";
-import { logout } from "../../Redux/slice/authSlice";
-import "aos/dist/aos.css"; // Import AOS CSS
-import AOS from "aos"; // Import AOS library
+import { fetchDisasters } from "../../../Redux/slice/disasterSlice";
+import { logout } from "../../../Redux/slice/authSlice";
+import "aos/dist/aos.css"; 
+import AOS from "aos"; 
 
 const Homepage = () => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const Homepage = () => {
 
   useEffect(() => {
     dispatch(fetchDisasters());
-    AOS.init({ duration: 1000, easing: "ease-in-out" }); // Inisialisasi AOS
+    AOS.init({ duration: 1000, easing: "ease-in-out" });
   }, [dispatch]);
 
   const handleLogout = () => {
