@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const location = useLocation();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -21,10 +23,27 @@ const Navbar = () => {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const avatar = user ? user.avatar : "";
+  const username = user ? user.name : "";
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const isActive = (path) =>
+    location.pathname === path
+      ? "bg-teal-300 text-teal-900"
+      : "hover:bg-teal-200 hover:text-teal-900";
 
   return (
     <>
-      <div className="navbar bg-base-100 shadow-lg">
+      <div className="navbar bg-base-100 shadow-lg p-4">
         <div className="navbar-start">
           <button
             className="btn btn-ghost lg:hidden"
@@ -46,7 +65,7 @@ const Navbar = () => {
             </svg>
           </button>
 
-          <Link to="/" className="btn btn-ghost normal-case text-xl">
+          <Link to="/" className="btn btn-ghost normal-case text-xl text-teal-600 font-semibold">
             BenKir News
           </Link>
         </div>
@@ -54,53 +73,61 @@ const Navbar = () => {
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal p-0 space-x-4">
             <li>
-              <Link to="/">Home</Link>
+              <Link to="/" className={`${isActive("/")}`}>
+                Home
+              </Link>
             </li>
             <li>
-              <Link to="/about">About</Link>
-            </li>
-            <li>
-              <Link to="/contact">Contact</Link>
+              <Link to="/about" className={`${isActive("/about")}`}>
+                About
+              </Link>
             </li>
           </ul>
         </div>
 
-        <div className="navbar-end">
+        <div className="navbar-end flex items-center space-x-4">
           {localStorage.getItem("token") ? (
-            <div>
-              <div className="relative">
-                <label
-                  tabIndex="0"
-                  className="btn btn-ghost flex items-center space-x-2 cursor-pointer"
-                  onClick={toggleDropdown}
+            <div className="relative">
+              <label
+                className="btn btn-ghost flex items-center space-x-2 cursor-pointer"
+                onClick={toggleDropdown}
+              >
+                <img
+                  src={
+                    avatar ||
+                    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
+                  }
+                  alt="User Avatar"
+                  className="w-10 h-10 rounded-full"
+                />
+                {username && <span className="ml-2">{username}</span>} 
+              </label>
+
+              {isDropdownOpen && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute right-0 mt-2 w-48 shadow-lg rounded-lg bg-white border border-teal-200 z-50"
                 >
-                  <img
-                    src={
-                      avatar ||
-                      "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
-                    }
-                    alt="User Avatar"
-                    className="w-10 h-10 rounded-full"
-                  />
-                </label>
-                {isDropdownOpen && (
-                  <ul className="absolute right-0 mt-2 p-2 bg-white shadow-lg rounded-md space-y-2">
+                  <ul className="space-y-2 py-2">
                     <li>
-                      <Link to="/profile" className="block px-4 py-2 text-gray-700">
-                        Profile
+                      <Link
+                        to="/dashboard"
+                        className="block px-4 py-2 text-gray-800 hover:bg-teal-100 hover:text-teal-800"
+                      >
+                        Dashboard
                       </Link>
                     </li>
                     <li>
                       <button
                         onClick={handleLogout}
-                        className="block px-4 py-2 text-gray-700"
+                        className="block w-full px-4 py-2 text-gray-800 hover:bg-teal-100 hover:text-teal-800 text-left"
                       >
                         Logout
                       </button>
                     </li>
                   </ul>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="flex space-x-2">
@@ -116,9 +143,8 @@ const Navbar = () => {
       </div>
 
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-base-100 shadow-lg transform transition-transform duration-300 z-50 lg:hidden ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed top-0 left-0 h-full w-64 bg-base-100 shadow-lg transform transition-transform duration-300 z-50 lg:hidden ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <button
           className="btn btn-ghost absolute top-4 right-4"
@@ -126,20 +152,15 @@ const Navbar = () => {
         >
           ✕
         </button>
-        <ul className="menu p-4">
+        <ul className="menu p-4 space-y-2">
           <li>
-            <Link to="/" onClick={toggleSidebar}>
+            <Link to="/" onClick={toggleSidebar} className={`${isActive("/")}`}>
               Home
             </Link>
           </li>
           <li>
-            <Link to="/about" onClick={toggleSidebar}>
+            <Link to="/about" onClick={toggleSidebar} className={`${isActive("/about")}`}>
               About
-            </Link>
-          </li>
-          <li>
-            <Link to="/contact" onClick={toggleSidebar}>
-              Contact
             </Link>
           </li>
         </ul>

@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .text-outline {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  }
+}

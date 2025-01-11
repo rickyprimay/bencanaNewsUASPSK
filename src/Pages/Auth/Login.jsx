@@ -1,45 +1,23 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { login } from '../../Redux/actions/authAction';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/auth/login", {
-        email,
-        password,
-      });
-
-      if (response.data.status) {
-        Swal.fire({
-          icon: "success",
-          title: "Login Successful",
-          text: response.data.message,
-        });
-
-        // Simpan token ke localStorage
-        localStorage.setItem("token", response.data.token);
-
-        // Simpan data user ke localStorage
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-
-        navigate("/"); // Arahkan pengguna ke homepage
-      }
-    } catch (err) {
-      Swal.fire({
-        icon: "error",
-        title: "Login Failed",
-        text:
-          (err.response && err.response.data.message) ||
-          "Something went wrong. Please try again.",
-      });
+      await dispatch(login({ email, password })).unwrap();
+      Swal.fire('Success', 'You have logged in successfully!', 'success');
+      navigate('/');
+    } catch (error) {
+      Swal.fire('Error', 'Invalid credentials, please try again.', 'error');
     }
   };
 
@@ -76,16 +54,16 @@ const Login = () => {
               />
             </div>
             <div className="form-control mt-6">
-              <button className="btn btn-primary" type="submit">
+              <button className="btn bg-teal-600 text-white hover:bg-teal-700" type="submit">
                 Login
               </button>
             </div>
           </form>
           <p className="mt-4 text-center">
-            Don't have an account?{" "}
-            <Link to="/register" className="text-blue-500">
+            Don't have an account?{' '}
+            <a href="/register" className="text-teal-600">
               Register here
-            </Link>
+            </a>
           </p>
         </div>
       </div>

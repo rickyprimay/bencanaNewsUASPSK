@@ -1,62 +1,32 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { register } from '../../Redux/actions/authAction';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const Register = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
       Swal.fire({
-        icon: "error",
-        title: "Password Mismatch",
-        text: "Password and Confirm Password do not match.",
+        icon: 'error',
+        title: 'Password Mismatch',
+        text: 'Password and Confirm Password do not match.',
       });
       return;
-    } else if(password === "" || confirmPassword === ""){
-      Swal.fire({
-        icon: "error",
-        title: "Password Required",
-        text: "Password and Confirm Password are required.",
-      });
-      return;
-      
     }
 
-    try {
-      const response = await axios.post("http://127.0.0.1:8000/api/auth/register", {
-        name,
-        email,
-        password,
-      });
-
-      if (response.data.status) {
-        Swal.fire({
-          icon: "success",
-          title: "Registration Successful",
-          text: "You can now log in with your account.",
-        });
-
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-
-        navigate("/"); 
-      }
-    } catch (err) {
-      Swal.fire({
-        icon: "error",
-        title: "Registration Failed",
-        text:
-          (err.response && err.response.data.message) ||
-          "Something went wrong. Please try again later.",
-      });
+    dispatch(register(name, email, password));
+    if (localStorage.getItem('token')) {
+      navigate('/');
     }
   };
 
@@ -119,14 +89,14 @@ const Register = () => {
               />
             </div>
             <div className="form-control mt-6">
-              <button className="btn btn-primary" type="submit">
+              <button className="btn bg-teal-600 text-white hover:bg-teal-700" type="submit">
                 Register
               </button>
             </div>
           </form>
           <p className="mt-4 text-center">
-            Already have an account?{" "}
-            <a href="/login" className="text-blue-500">
+            Already have an account?{' '}
+            <a href="/login" className="text-teal-600">
               Login here
             </a>
           </p>
