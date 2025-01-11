@@ -41,9 +41,8 @@ const Navbar = () => {
       ? "bg-teal-300 text-teal-900"
       : "hover:bg-teal-200 hover:text-teal-900";
 
-  // Cek apakah kita berada di halaman /dashboard
-  const isDashboard = location.pathname === "/dashboard";
-
+  const isDashboard = location.pathname === "/dashboard" || location.pathname.startsWith("/dashboard/");
+  
   return (
     <>
       <div className="navbar bg-base-100 shadow-lg p-4">
@@ -109,7 +108,6 @@ const Navbar = () => {
                   alt="User Avatar"
                   className="w-10 h-10 rounded-full"
                 />
-                {/* Conditionally render username only if not on mobile */}
                 {!isDashboard && username && <span className="ml-2">{username}</span>}
               </label>
 

@@ -14,7 +14,6 @@ const Homepage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { disasters, loading } = useSelector((state) => state.disasters);
-  const { user } = useSelector((state) => state.auth);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -40,7 +39,6 @@ const Homepage = () => {
     <>
       <Navbar />
       <div className="min-h-screen bg-gray-100">
-        {/* Hero Section */}
         <div
           className="relative bg-cover bg-center h-[500px] text-white"
           style={{
@@ -67,7 +65,6 @@ const Homepage = () => {
           </div>
         </div>
 
-        {/* Berita Terkini */}
         <div className="container mx-auto py-12">
           <h2
             className="text-3xl md:text-4xl font-bold text-center mb-10 text-teal-600 border-b-2 border-black inline-block pb-2"
@@ -94,10 +91,8 @@ const Homepage = () => {
           )}
         </div>
 
-        {/* Footer */}
         <Footer />
 
-        {/* Modal Logout */}
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/60 transition-opacity duration-300">
             <div className="bg-white p-6 rounded shadow-lg w-96">

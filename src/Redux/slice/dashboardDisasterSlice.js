@@ -1,12 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { BASE_URL } from "../../utils/network"
 
 const initialState = {
   totalNews: 0,
   totalAllNews: 0,
   loading: false,
   error: null,
+  news: [],
 };
 
 const dashboardDisasterSlice = createSlice({
@@ -27,6 +29,15 @@ const dashboardDisasterSlice = createSlice({
       state.error = "Failed to load disaster counts";
       Swal.fire("Error", "Failed to load disaster count data.", "error");
     },
+    fetchNewsSuccess: (state, action) => {
+      state.loading = false;
+      state.news = action.payload;
+    },
+    fetchNewsFail: (state) => {
+      state.loading = false;
+      state.error = "Failed to load news data";
+      Swal.fire("Error", "Failed to load news data.", "error");
+    },
   },
 });
 
@@ -34,6 +45,8 @@ export const {
   fetchDisasterCountsStart,
   fetchDisasterCountsSuccess,
   fetchDisasterCountsFail,
+  fetchNewsSuccess,
+  fetchNewsFail,
 } = dashboardDisasterSlice.actions;
 
 export const fetchDisasterCounts = () => async (dispatch) => {
@@ -41,12 +54,12 @@ export const fetchDisasterCounts = () => async (dispatch) => {
   try {
     const token = localStorage.getItem("token");
     const [userNewsResponse, allNewsResponse] = await Promise.all([
-      axios.get("http://127.0.0.1:8000/api/count-disaster", {
+      axios.get(`${BASE_URL}/count-disaster`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }),
-      axios.get("http://127.0.0.1:8000/api/count-all-disaster", {
+      axios.get(`${BASE_URL}/count-all-disaster`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -68,6 +81,28 @@ export const fetchDisasterCounts = () => async (dispatch) => {
     }
   } catch (error) {
     dispatch(fetchDisasterCountsFail());
+  }
+};
+
+export const fetchNews = () => async (dispatch) => {
+  dispatch(fetchDisasterCountsStart());
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${BASE_URL}/get-by-author`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const newsData = response.data;
+
+    if (newsData.status) {
+      dispatch(fetchNewsSuccess(newsData.data));
+    } else {
+      dispatch(fetchNewsFail());
+    }
+  } catch (error) {
+    dispatch(fetchNewsFail());
   }
 };
 

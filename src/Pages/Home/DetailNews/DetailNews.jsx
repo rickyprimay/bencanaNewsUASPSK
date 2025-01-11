@@ -50,6 +50,7 @@ const DetailNews = () => {
                 Lokasi: <span className="font-medium text-gray-700">{disasterDetail.location}</span>
               </p>
               <p className="text-gray-700 leading-relaxed mb-6">{disasterDetail.description}</p>
+              <p className="text-gray-700 leading-relaxed mb-6">{disasterDetail.content}</p>
 
               <button
                 onClick={() => navigate("/")}

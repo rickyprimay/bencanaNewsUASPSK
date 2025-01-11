@@ -6,6 +6,8 @@ import Homepage from "./Pages/Home/HomePage/HomePage";
 import About from "./Pages/Home/AboutPage/About";
 import Dashboard from "./Pages/User/Dashboard/Dashboard";
 import DetailNews from "./Pages/Home/DetailNews/DetailNews";
+import AllNewsUser from "./Pages/User/AllNewsUser/AllNewsUser";
+import RouteProtected from "./Components/RouteProtected";
 
 function App() {
   return (
@@ -16,7 +18,22 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={
+            <RouteProtected>
+              <Dashboard />
+            </RouteProtected>
+          }
+        />
+        <Route
+          path="/dashboard/all-articles"
+          element={
+            <RouteProtected>
+              <AllNewsUser />
+            </RouteProtected>
+          }
+        />
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </Router>

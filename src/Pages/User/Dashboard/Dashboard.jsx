@@ -1,6 +1,6 @@
-import React, { useEffect } from "react"; 
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDisasterCounts } from "../../../Redux/slice/dashboardDisasterSlice"; 
+import { fetchDisasterCounts } from "../../../Redux/slice/dashboardDisasterSlice";
 import Navbar from "../../../Components/Navbar";
 import Sidebar from "../../../Components/Sidebar";
 
@@ -43,13 +43,13 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <button className="btn btn-primary btn-block text-white py-3 px-6 text-lg hover:bg-teal-700 transition">
-              Tambahkan Berita
-            </button>
-            <button className="btn btn-secondary btn-block text-white py-3 px-6 text-lg hover:bg-yellow-600 transition">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
+            <a
+              href="/dashboard/all-articles"
+              className="btn btn-primary btn-block text-white py-3 px-6 text-lg hover:bg-teal-700 transition"
+            >
               Lihat Semua Berita
-            </button>
+            </a>
           </div>
         </div>
       </main>

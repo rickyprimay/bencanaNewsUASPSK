@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { BASE_URL } from "../../utils/network"
 
 const initialState = {
   disasters: [],
@@ -54,7 +55,7 @@ export const {
 export const fetchDisasters = () => async (dispatch) => {
   dispatch(fetchDisastersStart());
   try {
-    const response = await axios.get("http://127.0.0.1:8000/api/disasters");
+    const response = await axios.get(`${BASE_URL}/disasters`);
     dispatch(fetchDisastersSuccess(response.data.data));
   } catch (error) {
     dispatch(fetchDisastersFail());
@@ -64,7 +65,7 @@ export const fetchDisasters = () => async (dispatch) => {
 export const fetchDisasterDetail = (id) => async (dispatch) => {
   dispatch(fetchDisasterDetailStart());
   try {
-    const response = await axios.get(`http://127.0.0.1:8000/api/disasters/${id}`);
+    const response = await axios.get(`${BASE_URL}/disasters/${id}`);
     dispatch(fetchDisasterDetailSuccess(response.data.data));
   } catch (error) {
     dispatch(fetchDisasterDetailFail());
