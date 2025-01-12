@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchNews } from "../../../Redux/slice/dashboardDisasterSlice";
-import { createNews, updateNews } from "../../../Redux/slice/updateDeleteDisaster";
+import { createNews, updateNews, deleteNews } from "../../../Redux/slice/updateDeleteDisaster";
 import Navbar from "../../../Components/Navbar";
 import Sidebar from "../../../Components/Sidebar";
 import Table from "../../../Components/Table";
@@ -23,8 +23,6 @@ const AllNewsUser = () => {
 
   const [showFullDescription, setShowFullDescription] = useState({});
   const [showFullContent, setShowFullContent] = useState({});
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [newsToDelete, setNewsToDelete] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
@@ -39,9 +37,6 @@ const AllNewsUser = () => {
     setImagePreview(newsItem.image || null);
     setIsModalOpen(true);
   };
-
-
-  
 
   const handleToggleDescription = (id) => {
     setShowFullDescription((prev) => ({
@@ -69,6 +64,25 @@ const AllNewsUser = () => {
     setImagePreview(null);
     setIsModalOpen(true);
   };
+
+  const handleDelete = (newsItem) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Delete it",
+    }).then((result) => {
+      if(result.isConfirmed){
+        dispatch(deleteNews(newsItem.id))
+          .then(() => {
+            Swal.fire("Deleted", "News deleted successfully", "success")
+            window.location.reload();
+          })
+          .catch(() => Swal.fire("Error", "Failed to delete the news", "error"));
+      }
+    });
+  }
 
   const columns = [
     { header: "Judul", accessor: "title" },
@@ -130,7 +144,7 @@ const AllNewsUser = () => {
     },
     {
       label: "Delete",
-      onClick: handleEdit,
+      onClick: handleDelete,
       className: "bg-red-500 text-white",
     },
   ];
