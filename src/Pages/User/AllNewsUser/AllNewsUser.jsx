@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchNews } from "../../../Redux/slice/dashboardDisasterSlice";
-import { createNews, updateNews, deleteNews } from "../../../Redux/slice/updateDeleteDisaster";
+import { createNews, updateNews } from "../../../Redux/slice/updateDeleteDisaster";
 import Navbar from "../../../Components/Navbar";
 import Sidebar from "../../../Components/Sidebar";
 import Table from "../../../Components/Table";
@@ -10,7 +10,7 @@ import Swal from "sweetalert2";
 const AllNewsUser = () => {
   const dispatch = useDispatch();
   const { news, loading, error } = useSelector((state) => state.dashboardDisasters);
-  const { creating, updating, deleting } = useSelector((state) => state.updateDeleteDisaster); // Getting loading states
+  const { creating, updating, deleting } = useSelector((state) => state.updateDeleteDisaster);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentNews, setCurrentNews] = useState({
     id: "",
@@ -41,21 +41,7 @@ const AllNewsUser = () => {
   };
 
 
-  const handleDelete = (newsItem) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "This action cannot be undone!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        dispatch(deleteNews(newsItem.id))
-          .then(() => Swal.fire("Deleted!", "News has been deleted.", "success"))
-          .catch(() => Swal.fire("Error", "Failed to delete the news", "error"));
-      }
-    });
-  };
+  
 
   const handleToggleDescription = (id) => {
     setShowFullDescription((prev) => ({
@@ -85,7 +71,6 @@ const AllNewsUser = () => {
   };
 
   const columns = [
-    { header: "No.", accessor: (item, index) => index + 1 },
     { header: "Judul", accessor: "title" },
     {
       header: "Deskripsi",
@@ -145,25 +130,12 @@ const AllNewsUser = () => {
     },
     {
       label: "Delete",
-      onClick: handleDelete,
+      onClick: handleEdit,
       className: "bg-red-500 text-white",
     },
   ];
 
-  const confirmDelete = () => {
-    if (newsToDelete) {
-      dispatch(deleteNews(newsToDelete.id))
-        .then(() => {
-          Swal.fire("Deleted", "News deleted successfully", "success").then(() => {
-            window.location.reload();
-          });
-        })
-        .catch(() => {
-          Swal.fire("Error", "There was an error deleting the news", "error");
-        });
-    }
-    setIsDeleteModalOpen(false);
-  };
+  
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -174,7 +146,7 @@ const AllNewsUser = () => {
     formData.append("location", currentNews.location);
 
     if (currentNews.image && typeof currentNews.image !== "string") {
-      formData.append("image", currentNews.image); // Tambahkan gambar jika ada gambar baru
+      formData.append("image", currentNews.image);
     }
 
     if (currentNews.id) {

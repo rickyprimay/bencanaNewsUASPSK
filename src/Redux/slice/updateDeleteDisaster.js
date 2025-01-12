@@ -111,18 +111,6 @@ export const updateNews = (id, formData) => async (dispatch) => {
   }
 };
 
-export const deleteNews = (id) => async (dispatch) => {
-  dispatch(deleteNewsStart());
-  try {
-    const token = localStorage.getItem("token");
-    await axios.delete(`${BASE_URL}/disasters/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    dispatch(deleteNewsSuccess());
-    Swal.fire("Deleted", "News deleted successfully", "success");
-  } catch (error) {
-    dispatch(deleteNewsFail());
-  }
-};
+
 
 export default updateDeleteDisasterSlice.reducer;
