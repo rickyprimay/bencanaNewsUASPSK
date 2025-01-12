@@ -91,12 +91,18 @@ export const updateNews = (id, formData) => async (dispatch) => {
 
     formData.append("_method", "PUT");
 
-    await axios.post(`${BASE_URL}/disasters/${id}`, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    try {
+      await axios.post(`${BASE_URL}/disasters/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    } catch (error) {
+      console.error("API Error:", error.response ? error.response.data : error.message);
+      dispatch(updateNewsFail());
+    }
+    
 
     dispatch(updateNewsSuccess());
     Swal.fire("Updated", "News updated successfully", "success");

@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 const AllNewsUser = () => {
   const dispatch = useDispatch();
   const { news, loading, error } = useSelector((state) => state.dashboardDisasters);
+  const { creating, updating, deleting } = useSelector((state) => state.updateDeleteDisaster); // Getting loading states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentNews, setCurrentNews] = useState({
     id: "",
@@ -31,9 +32,14 @@ const AllNewsUser = () => {
   }, [dispatch]);
 
   const handleEdit = (newsItem) => {
-    setCurrentNews(newsItem);
+    setCurrentNews({
+      ...newsItem,
+      image: newsItem.image || null,
+    });
+    setImagePreview(newsItem.image || null);
     setIsModalOpen(true);
   };
+
 
   const handleDelete = (newsItem) => {
     Swal.fire({
@@ -123,7 +129,7 @@ const AllNewsUser = () => {
         </>
       ),
     },
-    { header: "Author", accessor: "author" }, 
+    { header: "Author", accessor: "author" },
     { header: "Lokasi", accessor: "location" },
     {
       header: "Gambar",
@@ -167,8 +173,8 @@ const AllNewsUser = () => {
     formData.append("content", currentNews.content);
     formData.append("location", currentNews.location);
 
-    if (currentNews.image) {
-      formData.append("image", currentNews.image);
+    if (currentNews.image && typeof currentNews.image !== "string") {
+      formData.append("image", currentNews.image); // Tambahkan gambar jika ada gambar baru
     }
 
     if (currentNews.id) {
@@ -206,7 +212,14 @@ const AllNewsUser = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading || creating || updating || deleting) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-16 h-16 border-4 border-t-4 border-teal-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -225,7 +238,7 @@ const AllNewsUser = () => {
 
           {isModalOpen && (
             <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-              <div className="bg-white p-6 rounded-lg w-1/2 shadow-lg">
+              <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                 <h2 className="text-2xl font-semibold mb-4 text-teal-600">
                   {currentNews.id ? "Edit Berita" : "Tambah Berita"}
                 </h2>
@@ -248,8 +261,9 @@ const AllNewsUser = () => {
                       value={currentNews.description}
                       onChange={(e) => setCurrentNews({ ...currentNews, description: e.target.value })}
                       className="mt-2 block w-full px-3 py-2 border rounded-lg text-black bg-transparent"
+                      rows="3"
                       required
-                    />
+                    ></textarea>
                   </div>
                   <div className="mb-4">
                     <label htmlFor="content" className="block text-sm font-medium text-gray-700">Konten :</label>
@@ -258,8 +272,9 @@ const AllNewsUser = () => {
                       value={currentNews.content}
                       onChange={(e) => setCurrentNews({ ...currentNews, content: e.target.value })}
                       className="mt-2 block w-full px-3 py-2 border rounded-lg text-black bg-transparent"
+                      rows="5"
                       required
-                    />
+                    ></textarea>
                   </div>
                   <div className="mb-4">
                     <label htmlFor="location" className="block text-sm font-medium text-gray-700">Lokasi :</label>
@@ -269,6 +284,7 @@ const AllNewsUser = () => {
                       value={currentNews.location}
                       onChange={(e) => setCurrentNews({ ...currentNews, location: e.target.value })}
                       className="mt-2 block w-full px-3 py-2 border rounded-lg text-black bg-transparent"
+                      required
                     />
                   </div>
                   <div className="mb-4">
@@ -279,50 +295,21 @@ const AllNewsUser = () => {
                       onChange={handleImageChange}
                       className="mt-2 block w-full px-3 py-2 border rounded-lg text-black bg-transparent"
                     />
-                    {imagePreview && (
-                      <img
-                        src={imagePreview}
-                        alt="Image Preview"
-                        className="mt-2 w-32 h-32 object-cover"
-                      />
-                    )}
+                    {imagePreview && <img src={imagePreview} alt="Preview" className="mt-2 w-32 h-32 object-cover" />}
                   </div>
                   <div className="flex justify-end">
-                    <button
-                      type="button"
-                      onClick={() => setIsModalOpen(false)}
-                      className="px-4 py-2 bg-gray-500 text-white rounded-lg mr-2"
-                    >
-                      Cancel
-                    </button>
-                    <button type="submit" className="px-4 py-2 bg-teal-600 text-white rounded-lg">
-                      {currentNews.id ? "Update" : "Create"}
+                    <button type="submit" className="px-6 py-2 bg-teal-600 text-white rounded-lg">
+                      {currentNews.id ? "Update" : "Add"}
                     </button>
                   </div>
                 </form>
+                <button onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2 text-gray-600">
+                  X
+                </button>
               </div>
             </div>
           )}
 
-          {isDeleteModalOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-              <div className="bg-white p-8 rounded-lg max-w-lg w-full">
-                <h3 className="text-xl font-semibold mb-4">Are you sure?</h3>
-                <div className="flex justify-end">
-                  <button type="button" onClick={() => setIsDeleteModalOpen(false)} className="px-4 py-2 bg-gray-500 text-white rounded-lg mr-2">
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={confirmDelete}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </main>
     </div>
