@@ -1,1 +1,1 @@
-export const BASE_URL = "http://api.zyraproject.web.id/api";
+export const BASE_URL = "https://api.zyraproject.web.id/api";
